@@ -16,10 +16,21 @@ if (!fs.existsSync(uploadsDir)) {
 // ========================
 // Middleware
 // ========================
+const allowedOrigins = [
+    'https://kisan-krisi-kendra.vercel.app',
+    'https://kisan-krishi-kendra-admin.vercel.app'
+];
+
 app.use(cors({
-    origin: ['https://kisan-krisi-kendra.vercel.app', 'https://kisan-krishi-kendra-admin.vercel.app'],
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
-}));
+}));;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
