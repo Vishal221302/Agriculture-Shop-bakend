@@ -17,7 +17,7 @@ if (!fs.existsSync(uploadsDir)) {
 // Middleware
 // ========================
 app.use(cors({
-    origin: ['https://kisan-krisi-kendra.vercel.app/', 'https://kisan-krishi-kendra-admin.vercel.app/'],
+    origin: ['https://kisan-krisi-kendra.vercel.app', 'https://kisan-krishi-kendra-admin.vercel.app', 'http://localhost:5173', 'http://localhost:5174'],
     credentials: true
 }));
 app.use(express.json());
