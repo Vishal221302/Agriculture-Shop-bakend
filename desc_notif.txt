@@ -1,0 +1,50 @@
+[
+  {
+    "Field": "id",
+    "Type": "int(11)",
+    "Null": "NO",
+    "Key": "PRI",
+    "Default": null,
+    "Extra": "auto_increment"
+  },
+  {
+    "Field": "order_id",
+    "Type": "int(11)",
+    "Null": "YES",
+    "Key": "",
+    "Default": null,
+    "Extra": ""
+  },
+  {
+    "Field": "mobile_number",
+    "Type": "varchar(20)",
+    "Null": "YES",
+    "Key": "",
+    "Default": null,
+    "Extra": ""
+  },
+  {
+    "Field": "items_count",
+    "Type": "int(11)",
+    "Null": "YES",
+    "Key": "",
+    "Default": "0",
+    "Extra": ""
+  },
+  {
+    "Field": "is_read",
+    "Type": "tinyint(1)",
+    "Null": "YES",
+    "Key": "",
+    "Default": "0",
+    "Extra": ""
+  },
+  {
+    "Field": "created_at",
+    "Type": "timestamp",
+    "Null": "YES",
+    "Key": "",
+    "Default": "current_timestamp()",
+    "Extra": ""
+  }
+]

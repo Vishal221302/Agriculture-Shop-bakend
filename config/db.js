@@ -16,8 +16,18 @@ const pool = mysql.createPool({
 const promisePool = pool.promise();
 
 promisePool.getConnection()
-  .then(connection => {
+  .then(async connection => {
     console.log('MySQL Connected');
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_id INT DEFAULT NULL,
+        mobile_number VARCHAR(20) DEFAULT NULL,
+        items_count INT DEFAULT 0,
+        is_read TINYINT(1) DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
     connection.release();
   })
   .catch(err => {

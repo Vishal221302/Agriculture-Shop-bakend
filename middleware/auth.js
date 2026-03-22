@@ -3,7 +3,8 @@ require('dotenv').config();
 
 const authenticateAdmin = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    // Allow token via query param as well (for EventSource SSE API)
+    const token = (authHeader && authHeader.split(' ')[1]) || req.query.token;
 
     if (!token) {
         return res.status(401).json({ success: false, message: 'Access denied. No token provided.' });

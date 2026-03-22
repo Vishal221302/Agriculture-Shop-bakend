@@ -389,8 +389,62 @@ router.get('/stats', authenticateAdmin, async (req, res) => {
 });
 
 // ==========================
+// NOTIFICATIONS API (Protected)
+// ==========================
+router.get('/notifications', authenticateAdmin, async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM notifications ORDER BY created_at DESC LIMIT 100');
+        res.json({ success: true, data: rows });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+router.put('/notifications/:id/read', authenticateAdmin, async (req, res) => {
+    try {
+        await db.query('UPDATE notifications SET is_read = 1 WHERE id = ?', [req.params.id]);
+        res.json({ success: true, message: 'Notification marked as read' });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+router.delete('/notifications', authenticateAdmin, async (req, res) => {
+    try {
+        await db.query('TRUNCATE TABLE notifications');
+        res.json({ success: true, message: 'Notifications cleared' });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+router.delete('/notifications/:id', authenticateAdmin, async (req, res) => {
+    try {
+        await db.query('DELETE FROM notifications WHERE id = ?', [req.params.id]);
+        res.json({ success: true, message: 'Notification deleted' });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ==========================
 // ORDERS (Protected)
 // ==========================
+
+// SSE Endpoint for order notifications
+router.get('/orders/notifications', authenticateAdmin, (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    const onNewOrder = (data) => {
+        res.write(`data: ${JSON.stringify(data)}\n\n`);
+    };
+
+    if (req.app.locals.eventEmitter) {
+        req.app.locals.eventEmitter.on('newOrder', onNewOrder);
+    }
+
+    req.on('close', () => {
+        if (req.app.locals.eventEmitter) {
+            req.app.locals.eventEmitter.removeListener('newOrder', onNewOrder);
+        }
+    });
+});
+
 router.get('/orders', authenticateAdmin, async (req, res) => {
     try {
         // Fetch all orders

@@ -121,6 +121,24 @@ router.post('/orders', async (req, res) => {
         // 3. Commit the transaction
         await conn.commit();
 
+        // 4. Insert Notification securely to MySQL
+        const [notifyResult] = await conn.query(
+            'INSERT INTO notifications (order_id, mobile_number, items_count) VALUES (?, ?, ?)',
+            [orderId, String(mobile_number).trim(), orderItems.length]
+        );
+
+        // 5. Emit SSE Notification for Admin Panel
+        if (req.app.locals.eventEmitter) {
+            req.app.locals.eventEmitter.emit('newOrder', {
+                id: notifyResult.insertId,
+                order_id: orderId,
+                mobile_number: String(mobile_number).trim(),
+                items_count: orderItems.length,
+                is_read: 0,
+                created_at: new Date().toISOString()
+            });
+        }
+
         res.status(201).json({
             success: true,
             message: 'ऑर्डर सफलतापूर्वक हो गया! | Order placed successfully!',

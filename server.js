@@ -7,6 +7,10 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Global Event Emitter for Real-time Notifications (SSE)
+const EventEmitter = require('events');
+app.locals.eventEmitter = new EventEmitter();
+
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
